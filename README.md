@@ -10,7 +10,7 @@ It is probably not much portable, but you can use it as a reference for your own
 It makes use of the statuscolors patch for dwm and Tamsynmod font (for the cool icons). Both are dependencies
 for this bar. 
 
-Forked and rewritten from scratch from the great TrilbyWhite Status bar: https://github.com/TrilbyWhite/dwmStatus 
+Forked and rewritten from scratch from the great TrilbyWhite's Status bar: https://github.com/TrilbyWhite/dwmStatus 
 
 (the dwm status bar makes a GREAT project for learning a little C:))
 
