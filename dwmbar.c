@@ -10,13 +10,12 @@ https://github.com/TrilbyWhite/dwmStatus */
 #include <sys/statvfs.h>
 #include <sys/sysinfo.h>
 
-
 //Info files to open
 #define	        AC_FILE  "/sys/class/power_supply/ACAD/online"
 #define	       BAT_FILE  "/sys/class/power_supply/BAT1/capacity"
 #define	      WLAN_FILE  "/proc/net/wireless"
 #define	       CPU_FILE  "/proc/stat"
-
+#define         HDDPATH  "/"
 
 //Status bar strings. "\x06a" etc are colors defined in dwm's config.h (statuscolor patch, required). Unconventional unicode symbols are Tamsynmod font icons. 
 #define       AC_STRING  "\x06Â\x0don  " 
@@ -39,9 +38,9 @@ int main()
 		float fvalue; 
 		char itemstatus[20], bar[90];
 		long double a[4], b[4], loadavg;
-		char *filename = "/";	    
-		long mbvalue = 1024*1024;
-		float gbvalue = 0.000976563; 
+		const char *filename = HDDPATH;	    
+		const long  mbvalue = 1024*1024;
+		const float gbvalue = 0.000976563; 
 
 //Setup X display and root window id:
 		dpy=XOpenDisplay(NULL);
@@ -82,6 +81,7 @@ int main()
 		 sysinfo(&query);
 		 value = ((query.uptime) / 60) - (((query.uptime) / 3600) * 60 );
 		 value2 = (query.uptime) / 3600;
+		 
 		 sprintf(itemstatus, UPTIME_STRING, value2, value);
 		 strcat(bar, itemstatus);
 
@@ -90,6 +90,7 @@ int main()
 		 infile = fopen(WLAN_FILE, "r");
 		 fscanf(infile, "%*[^\n]\n%*[^\n]\nwlp6s0: %*d %d", &value);
 		 fclose(infile);
+		 
 		 sprintf(itemstatus, WLAN_STRING, value);
 		 strcat(bar, itemstatus);
 
@@ -98,17 +99,18 @@ int main()
 		 struct statvfs info;
 		 if (!statvfs(filename, &info))
   		 { 
-		  unsigned long blocks, blksize, freeblks, disk_size, used, free; 
+		  unsigned long /*blocks,*/ blksize, freeblks, /*disk_size, used,*/ free; 
 		  
 		  blksize = info.f_bsize;
-		  blocks = info.f_blocks;
+		 // blocks = info.f_blocks;
 		  freeblks = info.f_bavail;
 
-		  disk_size = blocks * blksize;
+		 // disk_size = blocks * blksize;
 		  free = freeblks * blksize;
-		  used = disk_size - free;
+		 // used = disk_size - free;
 
 		  fvalue = (free / mbvalue) * gbvalue; 
+		 
 		  sprintf(itemstatus, HDDFREE_STRING, fvalue);  
 		  strcat(bar, itemstatus); 		 
 		  }
@@ -119,6 +121,7 @@ int main()
 		 swptotal = query.totalswap;
 		 swpfree  = query.freeswap;
 		 fvalue = ((swptotal - swpfree) / mbvalue) * gbvalue;
+		 
 		 sprintf(itemstatus, USEDSWAP_STRING, fvalue);
 		 strcat(bar, itemstatus);
 
@@ -128,6 +131,7 @@ int main()
 		 ramtotal = query.totalram;
 		 ramfree  = query.freeram;
 		 fvalue   = (ramtotal - ramfree) / mbvalue;
+		 
 		 sprintf(itemstatus, USEDMEM_STRING, fvalue);
 		 strcat(bar, itemstatus);
 
@@ -146,7 +150,6 @@ int main()
 
 //Time
 		 struct tm *timeinfo;
-		 
 		 time(&current);
 		 timeinfo = localtime(&current);
 	     strftime(itemstatus, 20, CURRTIME_STRING, timeinfo); 
