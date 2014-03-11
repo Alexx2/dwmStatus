@@ -58,23 +58,23 @@ int main()
 				bar[0]='\0';
 
 //AC ADAPTER AND BATTERY STATUS 
-		 infile = fopen(AC_FILE, "r");
-		 fscanf(infile, "%d", &value);
-		 fclose(infile);
+		infile = fopen(AC_FILE, "r");
+		fscanf(infile, "%d", &value);
+		fclose(infile);
 		 //if ACAD is online (1)
-		 if (value == 1)
-		 {
-			 sprintf(itemstatus, AC_STRING);
-		 }
+		if (value == 1)
+		{
+		 	sprintf(itemstatus, AC_STRING);
+		}
 		 //if ACAD is offline shows battery percentage
-		 else
-		 {
-		  	 infile = fopen(BAT_FILE, "r");
-			 fscanf(infile, "%d", &value);
-			 fclose(infile);
-			 sprintf(itemstatus, BAT_STRING, value);
-		 }
-		 strcat(bar, itemstatus);
+		else
+		{
+		 	infile = fopen(BAT_FILE, "r");
+		 	fscanf(infile, "%d", &value);
+		 	fclose(infile);
+		 	sprintf(itemstatus, BAT_STRING, value);
+		}
+		 	strcat(bar, itemstatus);
 
 //UPTIME STATUS
 		 struct sysinfo query;
@@ -90,10 +90,8 @@ int main()
 		 infile = fopen(WLAN_FILE, "r");
 		 fscanf(infile, "%*[^\n]\n%*[^\n]\nwlp6s0: %*d %d", &value);
 		 fclose(infile);
-		 
 		 sprintf(itemstatus, WLAN_STRING, value);
 		 strcat(bar, itemstatus);
-
 
 //FREE HDD SPACE
 		 struct statvfs info;
@@ -121,7 +119,6 @@ int main()
 		 swptotal = query.totalswap;
 		 swpfree  = query.freeswap;
 		 fvalue = ((swptotal - swpfree) / mbvalue) * gbvalue;
-		 
 		 sprintf(itemstatus, USEDSWAP_STRING, fvalue);
 		 strcat(bar, itemstatus);
 
@@ -131,7 +128,6 @@ int main()
 		 ramtotal = query.totalram;
 		 ramfree  = query.freeram;
 		 fvalue   = (ramtotal - ramfree) / mbvalue;
-		 
 		 sprintf(itemstatus, USEDMEM_STRING, fvalue);
 		 strcat(bar, itemstatus);
 
