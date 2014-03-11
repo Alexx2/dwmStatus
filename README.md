@@ -12,8 +12,7 @@ for this bar.
 
 Forked and rewritten from scratch from the great TrilbyWhite's Status bar: https://github.com/TrilbyWhite/dwmStatus 
 
-(the dwm status bar makes a GREAT project for learning a little C:))
-
+(the dwm status bar makes a great project for learning a bit of the C language)
 
 Screenshot
 ----------
