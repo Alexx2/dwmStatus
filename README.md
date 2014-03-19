@@ -1,7 +1,7 @@
 dwm status bar
 ==============
 created:  20.02.2014
-modified: 20.02.2014
+modified: 19.03.2014
 
 This is my take on the dwm window manager status bar. 
 
