@@ -9,17 +9,20 @@ https://github.com/TrilbyWhite/dwmStatus */
 #include <time.h>
 #include <sys/statvfs.h>
 #include <sys/sysinfo.h>
+#include <math.h>
 
 //Info files to open
 #define	        AC_FILE  "/sys/class/power_supply/ACAD/online"
 #define	       BAT_FILE  "/sys/class/power_supply/BAT1/capacity"
+#define 		 	 BAT_PNOW	 "/sys/class/power_supply/BAT1/power_now"
+#define 		 	 BAT_ENOW  "/sys/class/power_supply/BAT1/energy_now"
 #define	      WLAN_FILE  "/proc/net/wireless"
 #define	       CPU_FILE  "/proc/stat"
 #define         HDDPATH  "/"
 
 //Status bar strings. "\x06a" etc are colors defined in dwm's config.h (statuscolor patch, required). Unconventional unicode symbols are Tamsynmod font icons. 
 #define       AC_STRING  "\x06Â\x0don  " 
-#define      BAT_STRING  "\x05ð\x0d%d%%  "
+#define      BAT_STRING  "\x05ð\x0d%d%% (%.0f:%02.0f) "
 #define   UPTIME_STRING  "\x07È\x0d%d:%02d  "
 #define     WLAN_STRING  "\x08¤\x0d%d%%  "
 #define  HDDFREE_STRING  "\x09¨\x0d%.2fG  "
@@ -35,7 +38,7 @@ int main()
 		time_t current;
 		FILE *infile;
 		int value, value2;
-		float fvalue; 
+		float fvalue, fvalue2; 
 		char itemstatus[20], bar[90];
 		long double a[4], b[4], loadavg;
 		const char *filename = HDDPATH;	    
@@ -61,7 +64,24 @@ int main()
 		infile = fopen(AC_FILE, "r");
 		fscanf(infile, "%d", &value);
 		fclose(infile);
-		 //if ACAD is online (1)
+		
+		infile = fopen(BAT_FILE, "r");
+		fscanf(infile, "%d", &value2);
+		fclose(infile);
+		//Calculates remaining battery time
+		infile = fopen(BAT_PNOW, "r");
+		fscanf(infile, "%f", &fvalue);
+		fclose(infile);
+
+		infile = fopen(BAT_ENOW, "r");
+		fscanf(infile, "%f", &fvalue2);
+		fclose(infile);
+	
+		fvalue = fvalue2 / fvalue;
+		fvalue2 = floor(fvalue);
+		fvalue2 = (fvalue - fvalue2) * 60;
+
+		//if ACAD is online (1)
 		if (value == 1)
 		{
 		 	sprintf(itemstatus, AC_STRING);
@@ -69,10 +89,7 @@ int main()
 		 //if ACAD is offline shows battery percentage
 		else
 		{
-		 	infile = fopen(BAT_FILE, "r");
-		 	fscanf(infile, "%d", &value);
-		 	fclose(infile);
-		 	sprintf(itemstatus, BAT_STRING, value);
+		 	sprintf(itemstatus, BAT_STRING, value2, fvalue, fvalue2);
 		}
 		 	strcat(bar, itemstatus);
 
@@ -97,21 +114,21 @@ int main()
 		 struct statvfs info;
 		 if (!statvfs(filename, &info))
   		 { 
-		  unsigned long /*blocks,*/ blksize, freeblks, /*disk_size, used,*/ free; 
+		  	unsigned long /*blocks,*/ blksize, freeblks, /*disk_size, used,*/ free; 
 		  
-		  blksize = info.f_bsize;
-		 // blocks = info.f_blocks;
-		  freeblks = info.f_bavail;
+		  	blksize = info.f_bsize;
+		 		// blocks = info.f_blocks;
+		  	freeblks = info.f_bavail;
 
-		 // disk_size = blocks * blksize;
-		  free = freeblks * blksize;
-		 // used = disk_size - free;
+		 		// disk_size = blocks * blksize;
+		  	free = freeblks * blksize;
+		 		// used = disk_size - free;
 
-		  fvalue = (free / mbvalue) * gbvalue; 
+		  	fvalue = (free / mbvalue) * gbvalue; 
 		 
-		  sprintf(itemstatus, HDDFREE_STRING, fvalue);  
-		  strcat(bar, itemstatus); 		 
-		  }
+		  	sprintf(itemstatus, HDDFREE_STRING, fvalue);  
+		  	strcat(bar, itemstatus); 		 
+ 		   }
 
 //Used swap space
 		 unsigned long swptotal, swpfree; 
@@ -136,7 +153,7 @@ int main()
 		 fscanf(infile, "%*s %Lf %Lf %Lf %Lf", &a[0],&a[1],&a[2],&a[3]);
 		 fclose(infile);
 		 sleep(1);
-	     infile = fopen(CPU_FILE, "r");
+	   infile = fopen(CPU_FILE, "r");
 		 fscanf(infile, "%*s %Lf %Lf %Lf %Lf", &b[0],&b[1],&b[2],&b[3]);
 		 fclose(infile);
 
@@ -148,7 +165,7 @@ int main()
 		 struct tm *timeinfo;
 		 time(&current);
 		 timeinfo = localtime(&current);
-	     strftime(itemstatus, 20, CURRTIME_STRING, timeinfo); 
+	   strftime(itemstatus, 20, CURRTIME_STRING, timeinfo); 
 		 strcat(bar, itemstatus); 
 
 //Set root window name (root window name == our status bar)
