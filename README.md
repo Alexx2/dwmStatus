@@ -19,7 +19,7 @@ Screenshot
 
 status bar on the right:
 
-![dwm status bar](https://raw2.github.com/Alexx2/dwmbar/master/dwmbar_screenshot.png)
+![dwm status bar](https://raw.githubusercontent.com/Alexx2/dwmbar/master/dwmbar_screenshot.png)
 
 
 Compiling notes
